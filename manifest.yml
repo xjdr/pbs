@@ -1,16 +1,19 @@
-- dep:
-    group: 'prodng'
-    artifact: 'stage1'
-    version: '0.1'
-- dep:
-    group: 'prodng'
-    artifact: 'stage2'
-    version: '0.1'
-- dep:
-    group: 'prodng'
-    artifact: 'stage2'
-    version: '0.1'
-- dep:
-    group: 'prodng'
-    artifact: 'networking'
-    version: '0.1'
+env:
+  target: '/tmp/prodngchroot'
+stages:
+  - dep:
+      group: 'prodng'
+      artifact: 'stage1'
+      version: '0.1'
+  - dep:
+      group: 'prodng'
+      artifact: 'stage2'
+      version: '0.1'
+  - dep:
+      group: 'prodng'
+      artifact: 'stage2'
+      version: '0.1'
+  - dep:
+      group: 'prodng'
+      artifact: 'networking'
+      version: '0.1'
