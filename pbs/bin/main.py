@@ -10,8 +10,9 @@ from IPython import embed
 from progressbar import *
 
 cwd=os.getcwd()
-rootDir=os.path.dirname(os.path.dirname(cwd))
-path=rootDir+"/manifest.yml"
+
+# rootDir=os.path.dirname(os.path.dirname(cwd))
+path=cwd+"/manifest.yml"
 
 def parse_config(path):
   if os.path.exists(path):
@@ -23,13 +24,13 @@ def parse_config(path):
 
 def validate_uri(complete_uri):
     try:
-        ret = urllib2.urlopen(complete_uri)
-        if ret.code == 200:
-          return 0
-        else:
-          return 1;
+	ret = urllib2.urlopen(complete_uri)
+	if ret.code == 200:
+	  return 0
+	else:
+	  return 1;
     except:
-        return 1
+	return 1
 
 def build_uri(dep):
   base_uri = 'http://ftp.us.debian.org/debian/pool/main/'
@@ -42,10 +43,10 @@ def build_uri(dep):
       complete_uri = base_uri + '/' + dep['name']
       uri_true=validate_uri(complete_uri)
       if uri_true == 0:
-         return complete_uri
+	 return complete_uri
       else:
-         print " Not a valid Download link "
-         sys.exit(1)
+	 print " Not a valid Download link "
+	 sys.exit(1)
 
 
 def download_package(name, url):
@@ -59,7 +60,7 @@ def download_package(name, url):
     sys.exit(1)
 
   # pbar = ProgressBar(maxval=int(deb.headers['Content-Length']), widgets=widgets).start()
-  pbar = ProgressBar(maxval=10000, widgets=widgets).start()
+  pbar = ProgressBar(maxval=10000, widgets=widgets).start() # TODO(JR): Fix the PB max value
 
   try:
     if not os.path.exists('packages'):
@@ -86,16 +87,13 @@ def main():
     group = dep['dep']['group']
     artifact = dep['dep']['artifact']
     version = dep['dep']['version']
-    group_manifest = parse_config(rootDir+"/"+group + '/' + artifact + '.yml')
+    group_manifest = parse_config(cwd+"/"+group + '/' + artifact + '.yml')
 
     if group_manifest == None:
       print "THERE IS NOTHING HERE, YO"
     else:
       for deb in group_manifest:
-	# print deb['dep']
 	download_package(deb['dep']['name'].split('/')[1], build_uri(deb['dep']))
-      # name = lib['dep']['artifact'] + '-' + lib['dep']['version']
-    # download_file(build_uri(group, artifact, version), name)
   sys.exit(0)
 
 if __name__ == "__main__":
