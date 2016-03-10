@@ -4,9 +4,14 @@ import os
 import sys
 import yaml
 import requests
+import urllib2
 
 from IPython import embed
 from progressbar import *
+
+cwd=os.getcwd()
+rootDir=os.path.dirname(os.path.dirname(cwd))
+path=rootDir+"/manifest.yml"
 
 def parse_config(path):
   if os.path.exists(path):
@@ -16,11 +21,32 @@ def parse_config(path):
     print "could not load lib file at %s" % path
     sys.exit(1)
 
+def validate_uri(complete_uri):
+    try:
+        ret = urllib2.urlopen(complete_uri)
+        if ret.code == 200:
+          return 0
+        else:
+          return 1;
+    except:
+        return 1
+
 def build_uri(dep):
   base_uri = 'http://ftp.us.debian.org/debian/pool/main/'
   complete_uri = base_uri + dep['name'][0] + '/' + dep['name']
-  
-  return complete_uri
+  print " Download URI : " , complete_uri
+  uri_true=validate_uri(complete_uri)
+  if uri_true == 0:
+     return complete_uri
+  else:
+      complete_uri = base_uri + '/' + dep['name']
+      uri_true=validate_uri(complete_uri)
+      if uri_true == 0:
+         return complete_uri
+      else:
+         print " Not a valid Download link "
+         sys.exit(1)
+
 
 def download_package(name, url):
   widgets = [FormatLabel('Downloading ' + name + ': '), Percentage(), Bar()]
@@ -53,13 +79,14 @@ def download_package(name, url):
     print e
 
 def main():
-  manifest = parse_config("manifest.yml")
+  print path
+  manifest = parse_config(path)
 
   for dep in manifest:
     group = dep['dep']['group']
     artifact = dep['dep']['artifact']
     version = dep['dep']['version']
-    group_manifest = parse_config(group + '/' + artifact + '.yml')
+    group_manifest = parse_config(rootDir+"/"+group + '/' + artifact + '.yml')
 
     if group_manifest == None:
       print "THERE IS NOTHING HERE, YO"
