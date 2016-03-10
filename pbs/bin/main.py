@@ -7,7 +7,8 @@ import requests
 import urllib2
 
 from IPython import embed
-from progressbar import *
+#from progressbar import *
+from tqdm import tqdm
 
 cwd=os.getcwd()
 
@@ -35,7 +36,7 @@ def validate_uri(complete_uri):
 def build_uri(dep):
   base_uri = 'http://ftp.us.debian.org/debian/pool/main/'
   complete_uri = base_uri + dep['name'][0] + '/' + dep['name']
-  print " Download URI : " , complete_uri
+  # print " Download URI : " , complete_uri
   uri_true=validate_uri(complete_uri)
   if uri_true == 0:
      return complete_uri
@@ -50,7 +51,7 @@ def build_uri(dep):
 
 
 def download_package(name, url):
-  widgets = [FormatLabel('Downloading ' + name + ': '), Percentage(), Bar()]
+#  widgets = [FormatLabel('Downloading ' + name + ': '), Percentage(), Bar()]
 
   deb = requests.get(url, stream=True)
   if not deb.status_code == requests.codes.ok:
@@ -60,8 +61,10 @@ def download_package(name, url):
     sys.exit(1)
 
   # pbar = ProgressBar(maxval=int(deb.headers['Content-Length']), widgets=widgets).start()
-  pbar = ProgressBar(maxval=10000, widgets=widgets).start() # TODO(JR): Fix the PB max value
+ # pbar = ProgressBar(maxval=10000, widgets=widgets).start() # TODO(JR): Fix the PB max value
 
+  pbar = tqdm(total=4096)
+  pbar.set_description("Downloading " + name + ":")
   try:
     if not os.path.exists('packages'):
       os.makedirs('packages')
@@ -73,14 +76,14 @@ def download_package(name, url):
 	  f.write(chunk)
 	  f.flush()
 
-    pbar.finish()
+    pbar.close()
 
   except Exception as e:
     print 'Download ' + name + ' Failed'
     print e
 
 def main():
-  print path
+  # print path
   manifest = parse_config(path)
 
   for dep in manifest:
