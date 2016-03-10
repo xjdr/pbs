@@ -1,4 +1,5 @@
 #Run
 requests
 PyYAML
-progressbar
+#progressbar
+tqdm

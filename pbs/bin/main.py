@@ -6,11 +6,11 @@ import yaml
 import requests
 import urllib2
 
-from IPython import embed
-from progressbar import *
+#from IPython import embed
+#from progressbar import *
+from tqdm import tqdm
 
 cwd=os.getcwd()
-
 # rootDir=os.path.dirname(os.path.dirname(cwd))
 path=cwd+"/manifest.yml"
 
@@ -32,26 +32,32 @@ def validate_uri(complete_uri):
     except:
 	return 1
 
-def build_uri(dep):
-  base_uri = 'http://ftp.us.debian.org/debian/pool/main/'
+def build_uri(dep,repoyml):
+  repos = parse_config(repoyml);
+  try:
+    base_uri = repos[dep['repo']]['url']
+  except:
+      print "URL not found in the yml for repo: "+dep['repo']
+      sys.exit(1)
   complete_uri = base_uri + dep['name'][0] + '/' + dep['name']
-  print " Download URI : " , complete_uri
   uri_true=validate_uri(complete_uri)
   if uri_true == 0:
-     return complete_uri
+      print " Download URI : " , complete_uri
+      return complete_uri
   else:
       complete_uri = base_uri + '/' + dep['name']
       uri_true=validate_uri(complete_uri)
       if uri_true == 0:
-	 return complete_uri
+          print " Download URI : " , complete_uri
+          return complete_uri
       else:
-	 print " Not a valid Download link "
+         print " Not a valid Download link :"+ complete_uri
 	 sys.exit(1)
 
 
-def download_package(name, url):
-  widgets = [FormatLabel('Downloading ' + name + ': '), Percentage(), Bar()]
-
+def download_package(name, pkg_path ,url):
+  #widgets = [FormatLabel('Downloading ' + name + ': '), Percentage(), Bar()]
+  
   deb = requests.get(url, stream=True)
   if not deb.status_code == requests.codes.ok:
     print 'Download deb Failed'
@@ -59,41 +65,72 @@ def download_package(name, url):
     print deb.text
     sys.exit(1)
 
-  # pbar = ProgressBar(maxval=int(deb.headers['Content-Length']), widgets=widgets).start()
-  pbar = ProgressBar(maxval=10000, widgets=widgets).start() # TODO(JR): Fix the PB max value
+ # pbar = ProgressBar(maxval=10000, widgets=widgets).start() # TODO(JR): Fix the PB max value
 
+  pbar = tqdm(total=4096)
+  pbar.set_description("Downloading " + name + ":")
   try:
-    if not os.path.exists('packages'):
-      os.makedirs('packages')
+    if not os.path.exists(pkg_path):
+      os.makedirs(pkg_path)
 
-    with open('packages/' + name, 'wb') as f:
+    with open(pkg_path+"/"+ name, 'wb') as f:
       for chunk in deb.iter_content(chunk_size=1024):
 	pbar.update(12)
 	if chunk: # filter out keep-alive new chunks
 	  f.write(chunk)
 	  f.flush()
 
-    pbar.finish()
+    pbar.close()
 
   except Exception as e:
     print 'Download ' + name + ' Failed'
     print e
 
-def main():
-  print path
-  manifest = parse_config(path)
+def setup_env(env):
+  chroot_path=os.path.join(env['target'])
+  #Create a base folder for building the image
+  create_folder(chroot_path)
+  return chroot_path
 
-  for dep in manifest:
+def unpack_pkg(pkgname,gz,chroot_path):
+    if(gz):
+        unpackstr = "cd %s; ar p %s data.tar.gz | tar xz "%(chroot_path, pkgname);
+    else:
+        unpackstr = "cd %s; ar p %s data.tar.xz | tar xJ "%(chroot_path, pkgname);
+    os.system(unpackstr);
+
+def create_folder(path):
+  if not os.path.exists(path):
+    os.mkdir(path,0755);
+  return path
+
+def main():
+  # print path
+  manifest = parse_config(path)
+  chroot_path=setup_env(manifest['env'])
+  for dep in manifest['stages']:
     group = dep['dep']['group']
     artifact = dep['dep']['artifact']
     version = dep['dep']['version']
     group_manifest = parse_config(cwd+"/"+group + '/' + artifact + '.yml')
+    pkg_path = artifact + "_packages"
+    pkg_path_abs = os.path.join(chroot_path,pkg_path)
+    create_folder(pkg_path_abs)
+    repoyml = cwd+"/"+group+"/repo.yml"
 
     if group_manifest == None:
       print "THERE IS NOTHING HERE, YO"
     else:
       for deb in group_manifest:
-	download_package(deb['dep']['name'].split('/')[1], build_uri(deb['dep']))
+        download_package(deb['dep']['name'].split('/')[-1], chroot_path ,build_uri(deb['dep'],repoyml))
+        unpack_pkg(deb['dep']['name'].split('/')[-1],deb['dep']['format']=='gz', chroot_path)
+      #Move the packages to folder
+      os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
+      os.system("cd %s; touch var/lib/dpkg/status"%(chroot_path))
+      #Install all the packages with force-depends
+      force_install_str="LANG=C chroot %s /bin/bash -c \"dpkg --force-depends --install %s/*.deb\""%(chroot_path,pkg_path)
+      for i in range(0,3):
+        os.system(force_install_str);
   sys.exit(0)
 
 if __name__ == "__main__":
