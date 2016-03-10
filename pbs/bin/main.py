@@ -6,7 +6,7 @@ import yaml
 import requests
 import urllib2
 
-from IPython import embed
+#from IPython import embed
 #from progressbar import *
 from tqdm import tqdm
 
@@ -56,7 +56,7 @@ def build_uri(dep,repoyml):
 
 
 def download_package(name, pkg_path ,url):
-  widgets = [FormatLabel('Downloading ' + name + ': '), Percentage(), Bar()]
+  #widgets = [FormatLabel('Downloading ' + name + ': '), Percentage(), Bar()]
   
   deb = requests.get(url, stream=True)
   if not deb.status_code == requests.codes.ok:
