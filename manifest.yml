@@ -1,5 +1,5 @@
 env:
-  target: '/tmp/prodngchroot'
+  target: '/tmp/prodng_chroot'
 stages:
   - dep:
       group: 'prodng'
