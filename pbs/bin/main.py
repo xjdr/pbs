@@ -7,7 +7,8 @@ import requests
 import urllib2
 
 from IPython import embed
-from progressbar import *
+#from progressbar import *
+from tqdm import tqdm
 
 cwd=os.getcwd()
 # rootDir=os.path.dirname(os.path.dirname(cwd))
@@ -64,8 +65,10 @@ def download_package(name, pkg_path ,url):
     print deb.text
     sys.exit(1)
 
-  # pbar = ProgressBar(maxval=int(deb.headers['Content-Length']), widgets=widgets).start()
-  pbar = ProgressBar(maxval=10000, widgets=widgets).start() # TODO(JR): Fix the PB max value
+ # pbar = ProgressBar(maxval=10000, widgets=widgets).start() # TODO(JR): Fix the PB max value
+
+  pbar = tqdm(total=4096)
+  pbar.set_description("Downloading " + name + ":")
   try:
     if not os.path.exists(pkg_path):
       os.makedirs(pkg_path)
@@ -77,7 +80,7 @@ def download_package(name, pkg_path ,url):
 	  f.write(chunk)
 	  f.flush()
 
-    pbar.finish()
+    pbar.close()
 
   except Exception as e:
     print 'Download ' + name + ' Failed'
@@ -101,7 +104,7 @@ def unpack_pkg(pkgname,gz,chroot_path):
     os.system(unpackstr);
 
 def main():
-  print path
+  # print path
   manifest = parse_config(path)
   chroot_path=setup_env(manifest['env'])
   pkg_path = os.path.join(chroot_path,'packages')
