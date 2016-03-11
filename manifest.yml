@@ -3,11 +3,11 @@ env:
 stages:
   - dep:
       group: 'prodng'
-      artifact: 'stage1'
+      artifact: 'defaults'
       version: '0.1'
   - dep:
       group: 'prodng'
-      artifact: 'stage2'
+      artifact: 'stage1'
       version: '0.1'
   - dep:
       group: 'prodng'

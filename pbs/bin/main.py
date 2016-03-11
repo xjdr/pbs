@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import commands
 import os
 import sys
 import yaml
@@ -23,14 +24,14 @@ def parse_config(path):
     sys.exit(1)
 
 def validate_uri(complete_uri):
-    try:
-	ret = urllib2.urlopen(complete_uri)
-	if ret.code == 200:
-	  return 0
-	else:
-	  return 1;
-    except:
-	return 1
+  try:
+    ret = urllib2.urlopen(complete_uri)
+    if ret.code == 200:
+      return 0
+    else:
+      return 1;
+  except:
+      return 1
 
 def build_uri(dep,repoyml):
   repos = parse_config(repoyml);
@@ -113,25 +114,30 @@ def main():
     artifact = dep['dep']['artifact']
     version = dep['dep']['version']
     group_manifest = parse_config(cwd+"/"+group + '/' + artifact + '.yml')
-    pkg_path = artifact + "_packages"
+    pkg_path = "packages"
     pkg_path_abs = os.path.join(chroot_path,pkg_path)
     create_folder(pkg_path_abs)
     repoyml = cwd+"/"+group+"/repo.yml"
-
     if group_manifest == None:
       print "THERE IS NOTHING HERE, YO"
     else:
       for deb in group_manifest:
-        download_package(deb['dep']['name'].split('/')[-1], chroot_path ,build_uri(deb['dep'],repoyml))
-        unpack_pkg(deb['dep']['name'].split('/')[-1],deb['dep']['format']=='gz', chroot_path)
+          if "defaults" in artifact:
+              download_package(deb['dep']['name'].split('/')[-1], chroot_path ,build_uri(deb['dep'],repoyml))
+              unpack_pkg(deb['dep']['name'].split('/')[-1],deb['dep']['format']=='gz', chroot_path)
       #Move the packages to folder
-      os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
-      os.system("cd %s; touch var/lib/dpkg/status"%(chroot_path))
+              os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
+              os.system("cd %s; touch var/lib/dpkg/status"%(chroot_path))
       #Install all the packages with force-depends
-      force_install_str="LANG=C chroot %s /bin/bash -c \"dpkg --force-depends --install %s/*.deb\""%(chroot_path,pkg_path)
-      for i in range(0,3):
-        os.system(force_install_str);
-  sys.exit(0)
+          elif "stage1" in artifact:
+             force_install_str="LANG=C chroot %s /bin/bash -c \"dpkg --force-depends --install %s/*.deb\""%(chroot_path,pkg_path)
+             print force_install_str
+              #for i in range(0,3):
+ #            os.system(force_install_str);
+             run_status=commands.getoutput(force_install_str)
+             print run_status
+
+      #sys.exit(0)
 
 if __name__ == "__main__":
   main()
