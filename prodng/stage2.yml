@@ -1,9 +1,5 @@
 
 - dep:
-    name: "glibc/libc-bin_2.19-18+deb8u3_amd64.deb"
-    repo: 'security'
-    format: 'deb'
-- dep:
     name: "base-files/base-files_8+deb8u3_amd64.deb"
     repo: 'main'
     format: 'deb'
@@ -12,15 +8,7 @@
     repo: 'main'
     format: 'deb'
 - dep:
-    name: "base-passwd/base-passwd_3.5.37_amd64.deb"
-    repo: 'main'
-    format: 'deb'
-- dep:
     name: "sensible-utils/sensible-utils_0.0.9_all.deb"
-    repo: 'main'
-    format: 'deb'
-- dep:
-    name: "gcc-4.9/libgcc1_4.9.2-10_amd64.deb"
     repo: 'main'
     format: 'deb'
 - dep:
@@ -28,7 +16,7 @@
     repo: 'main'
     format: 'deb'
 - dep:
-    name: "bash/bash_4.3-11+b1_amd64.deb"
+    name: "gcc-4.9/libgcc1_4.9.2-10_amd64.deb"
     repo: 'main'
     format: 'deb'
 - dep:
@@ -44,7 +32,15 @@
     repo: 'main'
     format: 'deb'
 - dep:
+    name: "glibc/libc-bin_2.19-18+deb8u3_amd64.deb"
+    repo: 'security'
+    format: 'deb'
+- dep:
     name: "cdebconf/libdebconfclient0_0.192_amd64.deb"
+    repo: 'main'
+    format: 'deb'
+- dep:
+    name: "base-passwd/base-passwd_3.5.37_amd64.deb"
     repo: 'main'
     format: 'deb'
 - dep:
@@ -61,5 +57,13 @@
     format: 'deb'
 - dep:
     name: "diffutils/diffutils_3.3-1+b1_amd64.deb"
+    repo: 'main'
+    format: 'deb'
+- dep:
+    format: xz
+    name: dash/dash_0.5.7-4+b1_amd64.deb
+    repo: main
+- dep:
+    name: "bash/bash_4.3-11+b1_amd64.deb"
     repo: 'main'
     format: 'deb'

@@ -105,6 +105,25 @@ def create_folder(path):
     os.mkdir(path,0755);
   return path
 
+def download_unpack(chroot_path,repoyml,group_manifest):
+  for deb in group_manifest:
+      # Download the package 
+      download_package(deb['dep']['name'].split('/')[-1], chroot_path ,build_uri(deb['dep'],repoyml))
+      # Unpack the package 
+      unpack_pkg(deb['dep']['name'].split('/')[-1],deb['dep']['format']=='gz', chroot_path)
+
+def install(group_manifest, chroot_path, pkg_path, force_install):
+  if force_install:
+    force_str="--force-depends"
+  else:
+    force_str=""
+
+  for deb in group_manifest:
+    force_install_str="LANG=C chroot %s /bin/bash -c \"dpkg %s --install %s/%s\""%(chroot_path,force_str,pkg_path,deb['dep']['name'].split('/')[-1])
+    print force_install_str
+    run_status=commands.getoutput(force_install_str)
+    print run_status
+
 def main():
   # print path
   manifest = parse_config(path)
@@ -121,23 +140,20 @@ def main():
     if group_manifest == None:
       print "THERE IS NOTHING HERE, YO"
     else:
-      for deb in group_manifest:
-          if "defaults" in artifact:
-              download_package(deb['dep']['name'].split('/')[-1], chroot_path ,build_uri(deb['dep'],repoyml))
-              unpack_pkg(deb['dep']['name'].split('/')[-1],deb['dep']['format']=='gz', chroot_path)
-      #Move the packages to folder
-              os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
-              os.system("cd %s; touch var/lib/dpkg/status"%(chroot_path))
+      if "defaults" in artifact:
+        download_unpack(chroot_path,repoyml,group_manifest)
+        #Move the packages to folder
+        os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
+        os.system("cd %s; touch var/lib/dpkg/status"%(chroot_path))
       #Install all the packages with force-depends
-          elif "stage1" in artifact:
-             force_install_str="LANG=C chroot %s /bin/bash -c \"dpkg --force-depends --install %s/*.deb\""%(chroot_path,pkg_path)
-             print force_install_str
-              #for i in range(0,3):
- #            os.system(force_install_str);
-             run_status=commands.getoutput(force_install_str)
-             print run_status
-
-      #sys.exit(0)
+      elif "stage1" in artifact:
+        #Force install stage1 packages
+        install(group_manifest, chroot_path, pkg_path, True)
+      elif "stage2" in artifact:
+        # Install stage2 packages normally
+        install(group_manifest, chroot_path, pkg_path, False)
+        run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"dpkg --configure -a\""%(chroot_path))
+        print run_status
 
 if __name__ == "__main__":
   main()
