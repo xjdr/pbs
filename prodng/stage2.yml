@@ -2,68 +2,51 @@
 - dep:
     name: "base-files/base-files_8+deb8u3_amd64.deb"
     repo: 'main'
-    format: 'deb'
 - dep:
     name: "dpkg/dpkg_1.17.26_amd64.deb"
     repo: 'main'
-    format: 'deb'
 - dep:
     name: "sensible-utils/sensible-utils_0.0.9_all.deb"
     repo: 'main'
-    format: 'deb'
 - dep:
     name: "gcc-4.9/gcc-4.9-base_4.9.2-10_amd64.deb"
     repo: 'main'
-    format: 'deb'
 - dep:
     name: "gcc-4.9/libgcc1_4.9.2-10_amd64.deb"
     repo: 'main'
-    format: 'deb'
 - dep:
     name: "coreutils/coreutils_8.23-4_amd64.deb"
     repo: 'main'
-    format: 'deb'
 - dep:
     name: "findutils/findutils_4.4.2-9+b1_amd64.deb"
     repo: 'main'
-    format: 'deb'
 - dep:
     name: "libc/libcap2/libcap2_2.24-8_amd64.deb"
     repo: 'main'
-    format: 'deb'
 - dep:
     name: "glibc/libc-bin_2.19-18+deb8u3_amd64.deb"
     repo: 'security'
-    format: 'deb'
 - dep:
     name: "cdebconf/libdebconfclient0_0.192_amd64.deb"
     repo: 'main'
-    format: 'deb'
 - dep:
     name: "base-passwd/base-passwd_3.5.37_amd64.deb"
     repo: 'main'
-    format: 'deb'
 - dep:
     name: "debianutils/debianutils_4.4+b1_amd64.deb"
     repo: 'main'
-    format: 'deb'
 - dep:
     name: "sed/sed_4.2.2-4+b1_amd64.deb"
     repo: 'main'
-    format: 'deb'
 - dep:
     name: "grep/grep_2.20-4.1_amd64.deb"
     repo: 'main'
-    format: 'deb'
 - dep:
     name: "diffutils/diffutils_3.3-1+b1_amd64.deb"
     repo: 'main'
-    format: 'deb'
 - dep:
-    format: xz
     name: dash/dash_0.5.7-4+b1_amd64.deb
     repo: main
 - dep:
     name: "bash/bash_4.3-11+b1_amd64.deb"
     repo: 'main'
-    format: 'deb'

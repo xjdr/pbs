@@ -1,0 +1,39 @@
+- dep: 
+    name: libb/libbsd/libbsd0_0.7.0-2_amd64.deb
+    repo: main
+- dep: 
+    name: libe/libedit/libedit2_3.1-20140620-2_amd64.deb
+    repo: main
+- dep:
+	name: audit/libaudit-common_2.4-1_all.deb
+	repo: main
+-dep:
+	name: audit/libaudit1_2.4-1+b1_amd64.deb
+	repo: main
+-dep:
+	name: shadow/passwd_4.2-3+deb8u1_amd64.deb
+	repo: main
+- dep:
+	name: debconf/debconf_1.5.56_all.deb
+	repo: main
+- dep: 
+    name: adduser/adduser_3.113+nmu3_all.deb
+    repo: main
+- dep:
+	name: autogen/libopts25_5.18.4-3_amd64.deb
+	repo: main
+- dep:
+	name: openssl/libssl1.0.0_1.0.1k-3+deb8u4_amd64.deb
+	repo: security
+- dep:
+	name: lsb/lsb-base_4.1+Debian13+nmu1_all.deb
+	repo: main
+- dep:
+	name: netbase/netbase_5.3_all.deb
+	repo: main
+- dep:
+	name: ntp/ntp_4.2.6.p5+dfsg-7+deb8u1_amd64.deb
+	repo: main
+- dep:
+	name: init-system-helpers/init-system-helpers_1.22_all.deb
+	repo: main
