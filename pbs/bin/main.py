@@ -98,7 +98,7 @@ def unpack_pkg(pkgname,gz,chroot_path):
     unpackstr = "cd %s; ar p %s data.tar.gz | tar xz "%(chroot_path, pkgname);
   else:
     unpackstr = "cd %s; ar p %s data.tar.xz | tar xJ "%(chroot_path, pkgname);
-    os.system(unpackstr);
+  os.system(unpackstr);
 
 def create_folder(path):
   if not os.path.exists(path):
