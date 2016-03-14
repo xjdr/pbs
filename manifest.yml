@@ -1,5 +1,5 @@
 env:
-  target: '/tmp/nacha/prodng_chroot'
+  target: '/tmp/prodng_chroot'
 stages:
   - dep:
       group: 'prodng'
