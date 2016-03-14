@@ -163,6 +163,10 @@ def main():
         # Install system packages normally
         download_packages(chroot_path,repoyml,group_manifest)
         os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
+        run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"touch /etc/shadow\""%(chroot_path))
+        print run_status
+        run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"touch /etc/gshadow\""%(chroot_path))
+        print run_status
         install(group_manifest, chroot_path, pkg_path, False)
         run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"dpkg --configure -a\""%(chroot_path))
         print run_status
