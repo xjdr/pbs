@@ -80,6 +80,30 @@
     name: ntp/ntp_4.2.6.p5+dfsg-7+deb8u1_amd64.deb
     repo: main
 - dep:
+    name: n/ncurses/libncursesw5_5.9+20140913-1+b1_amd64.deb 
+    repo: main
+- dep:
+    name: k/kmod/libkmod2_18-3_amd64.deb
+    repo: main
+- dep:
+    name: u/util-linux/libuuid1_2.25.2-6_amd64.deb
+    repo: main
+- dep:
+    name: u/util-linux/libblkid1_2.25.2-6_amd64.deb
+    repo: main
+- dep:
+    name: s/systemd/libudev1_215-17+deb8u3_amd64.deb
+    repo: main
+- dep:
+    name: p/procps/libprocps3_3.3.9-9_amd64.deb
+    repo: main
+- dep:
+    name: p/procps/procps_3.3.9-9_amd64.deb
+    repo: main
+- dep:
+    name: u/util-linux/libsmartcols1_2.25.2-6_amd64.deb
+    repo: main
+- dep:
     name: u/util-linux/libmount1_2.25.2-6_amd64.deb 
     repo: main
 - dep:
@@ -89,32 +113,17 @@
     name: s/sysvinit/initscripts_2.88dsf-59_amd64.deb
     repo: main
 - dep:
-    name: u/util-linux/util-linux_2.25.2-6_amd64.deb
-    repo: main
-- dep:
-    name: s/systemd/udev_215-17+deb8u3_amd64.deb
+    name: s/slang2/libslang2_2.3.0-2_amd64.deb 
     repo: main
 - dep:
     name: t/tzdata/tzdata_2015g-0+deb8u1_all.deb
     repo: main
 - dep:
-    name: s/syslinux/syslinux-common_6.03+dfsg-5+deb8u1_all.deb
+    name: u/util-linux/util-linux_2.25.2-6_amd64.deb
     repo: main
 - dep:
-    name: s/sysvinit/sysvinit-core_2.88dsf-59_amd64.deb
+    name: s/systemd/udev_215-17+deb8u3_amd64.deb
     repo: main
-- dep:
-    name: g/gzip/gzip_1.6-4_amd64.deb
-    repo: main
-- dep:
-    name: b/btrfs-tools/btrfs-tools_3.17-1.1_amd64.deb
-    repo: main
-- dep:
-    name: c/cgroupfs-mount/cgroupfs-mount_1.1_all.deb
-    repo: main
-- dep:
-    name: c/cpio/cpio_2.11+dfsg-4.1+deb8u1_amd64.deb
-    repo: security
 - dep:
     name: n/nano/nano_2.2.6-3_amd64.deb
     repo: main
