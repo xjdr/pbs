@@ -98,13 +98,13 @@
     name: p/procps/libprocps3_3.3.9-9_amd64.deb
     repo: main
 - dep:
-    name: p/procps/procps_3.3.9-9_amd64.deb
+    name: u/util-linux/libmount1_2.25.2-6_amd64.deb
     repo: main
 - dep:
     name: u/util-linux/libsmartcols1_2.25.2-6_amd64.deb
     repo: main
 - dep:
-    name: u/util-linux/libmount1_2.25.2-6_amd64.deb 
+    name: s/slang2/libslang2_2.3.0-2_amd64.deb
     repo: main
 - dep:
     name: u/util-linux/mount_2.25.2-6_amd64.deb
@@ -112,8 +112,9 @@
 - dep:
     name: s/sysvinit/initscripts_2.88dsf-59_amd64.deb
     repo: main
+
 - dep:
-    name: s/slang2/libslang2_2.3.0-2_amd64.deb 
+    name: p/procps/procps_3.3.9-9_amd64.deb
     repo: main
 - dep:
     name: t/tzdata/tzdata_2015g-0+deb8u1_all.deb
