@@ -49,11 +49,11 @@ def build_uri(dep,repoyml):
       complete_uri = base_uri + '/' + dep['name']
       uri_true=validate_uri(complete_uri)
       if uri_true == 0:
-	  print " Download URI : " , complete_uri
-	  return complete_uri
+        print " Download URI : " , complete_uri
+        return complete_uri
       else:
-	 print " Not a valid Download link :"+ complete_uri
-	 sys.exit(1)
+        print " Not a valid Download link :"+ complete_uri
+        sys.exit(1)
 
 
 def download_package(name, pkg_path ,url):
@@ -76,10 +76,10 @@ def download_package(name, pkg_path ,url):
 
     with open(pkg_path+"/"+ name, 'wb') as f:
       for chunk in deb.iter_content(chunk_size=1024):
-	pbar.update(12)
-	if chunk: # filter out keep-alive new chunks
-	  f.write(chunk)
-	  f.flush()
+        pbar.update(12)
+        if chunk: # filter out keep-alive new chunks
+          f.write(chunk)
+          f.flush()
 
     pbar.close()
 
@@ -94,10 +94,10 @@ def setup_env(env):
   return chroot_path
 
 def unpack_pkg(pkgname,gz,chroot_path):
-    if(gz):
-	unpackstr = "cd %s; ar p %s data.tar.gz | tar xz "%(chroot_path, pkgname);
-    else:
-	unpackstr = "cd %s; ar p %s data.tar.xz | tar xJ "%(chroot_path, pkgname);
+  if(gz):
+    unpackstr = "cd %s; ar p %s data.tar.gz | tar xz "%(chroot_path, pkgname);
+  else:
+    unpackstr = "cd %s; ar p %s data.tar.xz | tar xJ "%(chroot_path, pkgname);
     os.system(unpackstr);
 
 def create_folder(path):
@@ -146,19 +146,19 @@ def main():
       print "THERE IS NOTHING HERE, YO"
     else:
       if "defaults" in artifact:
-	download_unpack(chroot_path,repoyml,group_manifest)
-	#Move the packages to folder
-	os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
-	os.system("cd %s; touch var/lib/dpkg/status"%(chroot_path))
+        download_unpack(chroot_path,repoyml,group_manifest)
+        #Move the packages to folder
+        os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
+        os.system("cd %s; touch var/lib/dpkg/status"%(chroot_path))
       #Install all the packages with force-depends
       elif "stage1" in artifact:
-	#Force install stage1 packages
-	install(group_manifest, chroot_path, pkg_path, True)
+        #Force install stage1 packages
+        install(group_manifest, chroot_path, pkg_path, True)
       elif "stage2" in artifact:
-	# Install stage2 packages normally
-	install(group_manifest, chroot_path, pkg_path, False)
-	run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"dpkg --configure -a\""%(chroot_path))
-	print run_status
+        # Install stage2 packages normally
+        install(group_manifest, chroot_path, pkg_path, False)
+        run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"dpkg --configure -a\""%(chroot_path))
+        print run_status
       elif "system" in artifact:
         # Install system packages normally
         download_packages(chroot_path,repoyml,group_manifest)
@@ -166,7 +166,7 @@ def main():
         install(group_manifest, chroot_path, pkg_path, False)
         run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"dpkg --configure -a\""%(chroot_path))
         print run_status
-  #    elif "networking" in artifact:
+  #   elif "networking" in artifact:
   #      download_packages(chroot_path,repoyml,group_manifest)
   #      install(group_manifest, chroot_path, pkg_path, False)
   #      os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
