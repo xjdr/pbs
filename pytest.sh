@@ -1,3 +1,3 @@
 #!/bin/bash
 
-for i in $(ls test);do PYTHONPATH=. python test/$i; done
+for i in $(ls test/*.py);do PYTHONPATH=. python $i; done
