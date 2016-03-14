@@ -1,0 +1,9 @@
+- dep:
+    name: vim/vim-common_7.4.488-7_amd64.deb
+    repo: main
+- dep:
+    name: vim/vim-runtime_7.4.488-7_all.deb
+    repo: main
+- dep:
+    name: vim/vim_7.4.488-7_amd64.deb
+    repo: main

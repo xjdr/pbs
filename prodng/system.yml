@@ -5,6 +5,9 @@
     name: libe/libedit/libedit2_3.1-20140620-2_amd64.deb
     repo: main
 - dep:
+    name: p/perl/perl-base_5.20.2-3+deb8u4_amd64.deb
+    repo: security
+- dep:
     name: audit/libaudit-common_2.4-1_all.deb
     repo: main
 - dep:
@@ -27,6 +30,9 @@
     repo: main
 - dep:
     name: "p/pam/libpam0g_1.1.8-3.1+deb8u1_amd64.deb"
+    repo: main
+- dep:
+    name: "p/pam/libpam-modules-bin_1.1.8-3.1+deb8u1_amd64.deb"
     repo: main
 - dep:
     name: "libs/libsemanage/libsemanage1_2.3-1+b1_amd64.deb"
@@ -53,8 +59,100 @@
     name: netbase/netbase_5.3_all.deb
     repo: main
 - dep:
+    name: p/pam/libpam-runtime_1.1.8-3.1+deb8u1_all.deb
+    repo: main
+- dep:
+    name: s/startpar/startpar_0.59-3_amd64.deb
+    repo: main
+- dep:
+    name: i/insserv/insserv_1.14.0-5_amd64.deb
+    repo: main
+- dep:
+    name: s/sysvinit/sysvinit-utils_2.88dsf-59_amd64.deb
+    repo: main
+- dep:
+    name: s/sysvinit/sysv-rc_2.88dsf-59_all.deb
+    repo: main
+- dep:
+    name: s/shadow/login_4.2-3+deb8u1_amd64.deb
+    repo: main
+- dep:
     name: ntp/ntp_4.2.6.p5+dfsg-7+deb8u1_amd64.deb
     repo: main
 - dep:
-    name: init-system-helpers/init-system-helpers_1.22_all.deb
+    name: n/ncurses/libncursesw5_5.9+20140913-1+b1_amd64.deb 
     repo: main
+- dep:
+    name: k/kmod/libkmod2_18-3_amd64.deb
+    repo: main
+- dep:
+    name: u/util-linux/libuuid1_2.25.2-6_amd64.deb
+    repo: main
+- dep:
+    name: u/util-linux/libblkid1_2.25.2-6_amd64.deb
+    repo: main
+- dep:
+    name: s/systemd/libudev1_215-17+deb8u3_amd64.deb
+    repo: main
+- dep:
+    name: p/procps/libprocps3_3.3.9-9_amd64.deb
+    repo: main
+- dep:
+    name: u/util-linux/libmount1_2.25.2-6_amd64.deb
+    repo: main
+- dep:
+    name: u/util-linux/libsmartcols1_2.25.2-6_amd64.deb
+    repo: main
+- dep:
+    name: s/slang2/libslang2_2.3.0-2_amd64.deb
+    repo: main
+- dep:
+    name: u/util-linux/mount_2.25.2-6_amd64.deb
+    repo: main
+- dep:
+    name: s/sysvinit/initscripts_2.88dsf-59_amd64.deb
+    repo: main
+
+- dep:
+    name: p/procps/procps_3.3.9-9_amd64.deb
+    repo: main
+- dep:
+    name: t/tzdata/tzdata_2015g-0+deb8u1_all.deb
+    repo: main
+- dep:
+    name: u/util-linux/util-linux_2.25.2-6_amd64.deb
+    repo: main
+- dep:
+    name: s/systemd/udev_215-17+deb8u3_amd64.deb
+    repo: main
+- dep:
+    name: n/nano/nano_2.2.6-3_amd64.deb
+    repo: main
+- dep:
+    name: s/syslinux/syslinux-common_6.03+dfsg-5+deb8u1_all.deb
+    repo: main
+- dep:
+    name: s/sysvinit/sysvinit-core_2.88dsf-59_amd64.deb
+    repo: main
+- dep:
+    name: g/gzip/gzip_1.6-4_amd64.deb
+    repo: main
+- dep:
+    name: e/e2fsprogs/e2fslibs_1.42.12-1.1_amd64.deb
+    repo: main
+- dep:
+    name: e/e2fsprogs/libcomerr2_1.42.12-1.1_amd64.deb 
+    repo: main
+- dep:
+    name: l/lzo2/liblzo2-2_2.08-1.2_amd64.deb 
+    repo: main
+- dep:
+    name: b/btrfs-tools/btrfs-tools_3.17-1.1_amd64.deb
+    repo: main
+- dep:
+    name: c/cgroupfs-mount/cgroupfs-mount_1.2_all.deb
+    repo: main
+- dep:
+    name: c/cpio/cpio_2.11+dfsg-4.1+deb8u1_amd64.deb
+    repo: security
+
