@@ -1,5 +1,5 @@
 env:
-  target: '/tmp/prodng_chroot'
+  target: '/tmp/nacha/prodng_chroot'
 stages:
   - dep:
       group: 'prodng'
@@ -12,4 +12,12 @@ stages:
   - dep:
       group: 'prodng'
       artifact: 'stage2'
+      version: '0.1'
+  - dep:
+      group: 'prodng'
+      artifact: 'system'
+      version: '0.1'
+  - dep:
+      group: 'prodng'
+      artifact: 'networking'
       version: '0.1'

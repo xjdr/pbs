@@ -5,35 +5,56 @@
     name: libe/libedit/libedit2_3.1-20140620-2_amd64.deb
     repo: main
 - dep:
-	name: audit/libaudit-common_2.4-1_all.deb
-	repo: main
--dep:
-	name: audit/libaudit1_2.4-1+b1_amd64.deb
-	repo: main
--dep:
-	name: shadow/passwd_4.2-3+deb8u1_amd64.deb
-	repo: main
+    name: audit/libaudit-common_2.4-1_all.deb
+    repo: main
 - dep:
-	name: debconf/debconf_1.5.56_all.deb
-	repo: main
-- dep: 
+    name: audit/libaudit1_2.4-1+b1_amd64.deb
+    repo: main
+- dep:
+    name: debconf/debconf_1.5.56_all.deb
+    repo: main
+- dep:
+    name: "libs/libsemanage/libsemanage-common_2.3-1_all.deb"
+    repo: main
+- dep:
+    name: "libs/libsepol/libsepol1_2.3-2_amd64.deb"
+    repo: main
+- dep:
+    name: "u/ustr/libustr-1.0-1_1.0.4-3+b2_amd64.deb"
+    repo: main
+- dep:
+    name: "d/db5.3/libdb5.3_5.3.28-9_amd64.deb"
+    repo: main
+- dep:
+    name: "p/pam/libpam0g_1.1.8-3.1+deb8u1_amd64.deb"
+    repo: main
+- dep:
+    name: "libs/libsemanage/libsemanage1_2.3-1+b1_amd64.deb"
+    repo: main
+- dep:
+    name: "p/pam/libpam-modules_1.1.8-3.1+deb8u1_amd64.deb"
+    repo: main
+- dep:
+    name: shadow/passwd_4.2-3+deb8u1_amd64.deb
+    repo: main
+- dep:
     name: adduser/adduser_3.113+nmu3_all.deb
     repo: main
 - dep:
-	name: autogen/libopts25_5.18.4-3_amd64.deb
-	repo: main
+    name: autogen/libopts25_5.18.4-3_amd64.deb
+    repo: main
 - dep:
-	name: openssl/libssl1.0.0_1.0.1k-3+deb8u4_amd64.deb
-	repo: security
+    name: openssl/libssl1.0.0_1.0.1k-3+deb8u4_amd64.deb
+    repo: security
 - dep:
-	name: lsb/lsb-base_4.1+Debian13+nmu1_all.deb
-	repo: main
+    name: lsb/lsb-base_4.1+Debian13+nmu1_all.deb
+    repo: main
 - dep:
-	name: netbase/netbase_5.3_all.deb
-	repo: main
+    name: netbase/netbase_5.3_all.deb
+    repo: main
 - dep:
-	name: ntp/ntp_4.2.6.p5+dfsg-7+deb8u1_amd64.deb
-	repo: main
+    name: ntp/ntp_4.2.6.p5+dfsg-7+deb8u1_amd64.deb
+    repo: main
 - dep:
-	name: init-system-helpers/init-system-helpers_1.22_all.deb
-	repo: main
+    name: init-system-helpers/init-system-helpers_1.22_all.deb
+    repo: main

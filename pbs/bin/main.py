@@ -112,6 +112,11 @@ def download_unpack(chroot_path,repoyml,group_manifest):
       # Unpack the package 
       unpack_pkg(deb['dep']['name'].split('/')[-1],deb['dep']['format']=='gz', chroot_path)
 
+def download_packages(chroot_path,repoyml,group_manifest):
+    for deb in group_manifest:
+      download_package(deb['dep']['name'].split('/')[-1], chroot_path ,build_uri(deb['dep'],repoyml))
+
+
 def install(group_manifest, chroot_path, pkg_path, force_install):
   if force_install:
     force_str="--force-depends"
@@ -154,6 +159,19 @@ def main():
 	install(group_manifest, chroot_path, pkg_path, False)
 	run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"dpkg --configure -a\""%(chroot_path))
 	print run_status
+      elif "system" in artifact:
+        # Install system packages normally
+        download_packages(chroot_path,repoyml,group_manifest)
+        os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
+        install(group_manifest, chroot_path, pkg_path, False)
+        run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"dpkg --configure -a\""%(chroot_path))
+        print run_status
+  #    elif "networking" in artifact:
+  #      download_packages(chroot_path,repoyml,group_manifest)
+  #      install(group_manifest, chroot_path, pkg_path, False)
+  #      os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
+  #      run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"dpkg --configure -a\""%(chroot_path))
+  #      print run_status
 
 if __name__ == "__main__":
   main()
