@@ -6,6 +6,7 @@ import sys
 import yaml
 import requests
 import urllib2
+import shutil
 
 #from IPython import embed
 #from progressbar import *
@@ -90,7 +91,7 @@ def download_package(name, pkg_path ,url):
 def setup_env(env):
   chroot_path=os.path.join(env['target'])
   #Create a base folder for building the image
-  create_folder(chroot_path)
+  create_folder(chroot_path,True)
   return chroot_path
 
 def unpack_pkg(pkgname,gz,chroot_path):
@@ -100,7 +101,11 @@ def unpack_pkg(pkgname,gz,chroot_path):
     unpackstr = "cd %s; ar p %s data.tar.xz | tar xJ "%(chroot_path, pkgname);
   os.system(unpackstr);
 
-def create_folder(path):
+def create_folder(path,remove_if_present=False):
+
+  if (os.path.exists(path) and remove_if_present):
+    shutil.rmtree(path)
+
   if not os.path.exists(path):
     os.mkdir(path,0755);
   return path
