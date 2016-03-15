@@ -124,7 +124,7 @@ def install(group_manifest, chroot_path, pkg_path, force_install):
     force_str=""
 
   for deb in group_manifest:
-    force_install_str="LANG=C chroot %s /bin/bash -c \"dpkg %s --install %s/%s\""%(chroot_path,force_str,pkg_path,deb['dep']['name'].split('/')[-1])
+    force_install_str="LANG=C DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true chroot %s /bin/bash -c \"dpkg %s --install %s/%s\""%(chroot_path,force_str,pkg_path,deb['dep']['name'].split('/')[-1])
     print force_install_str
     run_status=commands.getoutput(force_install_str)
     print run_status
@@ -163,15 +163,24 @@ def main():
         # Install system packages normally
         download_packages(chroot_path,repoyml,group_manifest)
         os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
+        run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"touch /etc/shadow\""%(chroot_path))
+        print run_status
+        run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"touch /etc/gshadow\""%(chroot_path))
+        print run_status
         install(group_manifest, chroot_path, pkg_path, False)
         run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"dpkg --configure -a\""%(chroot_path))
         print run_status
-  #   elif "networking" in artifact:
+      elif "networking" in artifact:
+        download_packages(chroot_path,repoyml,group_manifest)
+        install(group_manifest, chroot_path, pkg_path, False)
+        os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
+        run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"dpkg --configure -a\""%(chroot_path))
+        print run_status
+  #    elif "development" in artifact:
   #      download_packages(chroot_path,repoyml,group_manifest)
   #      install(group_manifest, chroot_path, pkg_path, False)
   #      os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
   #      run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"dpkg --configure -a\""%(chroot_path))
   #      print run_status
-
 if __name__ == "__main__":
   main()
