@@ -171,12 +171,26 @@ def main():
         run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"dpkg --configure -a\""%(chroot_path))
         print run_status
       elif "networking" in artifact:
+        run_status=commands.getoutput("mount -o bind /dev %s/dev"%(chroot_path))
+        print run_status
+        run_status=commands.getoutput("mount -o bind /dev/pts %s/dev/pts"%(chroot_path))
+        print run_status
+        run_status=commands.getoutput("mount -o bind /proc %s/proc"%(chroot_path))
+        print run_status
+        run_status=commands.getoutput("mount -o bind /sys %s/sys"%(chroot_path))
+        print run_status
         download_packages(chroot_path,repoyml,group_manifest)
         os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
         install(group_manifest, chroot_path, pkg_path, False)
         run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"dpkg --configure -a\""%(chroot_path))
         print run_status
       elif "development" in artifact:
+        download_packages(chroot_path,repoyml,group_manifest)
+        os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
+        install(group_manifest, chroot_path, pkg_path, False)
+        run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"dpkg --configure -a\""%(chroot_path))
+        print run_status
+      elif "physical" in artifact:
         download_packages(chroot_path,repoyml,group_manifest)
         os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
         install(group_manifest, chroot_path, pkg_path, False)
