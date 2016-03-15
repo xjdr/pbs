@@ -46,7 +46,7 @@ def build_uri(dep,repoyml):
       print " Download URI : " , complete_uri
       return complete_uri
   else:
-      complete_uri = base_uri + '/' + dep['name']
+      complete_uri = base_uri + dep['name']
       uri_true=validate_uri(complete_uri)
       if uri_true == 0:
         print " Download URI : " , complete_uri
