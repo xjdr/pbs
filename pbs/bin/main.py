@@ -7,6 +7,7 @@ import yaml
 import requests
 import urllib2
 import shutil
+import time
 
 #from IPython import embed
 #from progressbar import *
@@ -121,7 +122,6 @@ def download_packages(chroot_path,repoyml,group_manifest):
     for deb in group_manifest:
       download_package(deb['dep']['name'].split('/')[-1], chroot_path ,build_uri(deb['dep'],repoyml))
 
-
 def install(group_manifest, chroot_path, pkg_path, force_install):
   if force_install:
     force_str="--force-depends"
@@ -129,10 +129,54 @@ def install(group_manifest, chroot_path, pkg_path, force_install):
     force_str=""
 
   for deb in group_manifest:
-    force_install_str="LANG=C DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true chroot %s /bin/bash -c \"dpkg %s --install %s/%s\""%(chroot_path,force_str,pkg_path,deb['dep']['name'].split('/')[-1])
-    print force_install_str
-    run_status=commands.getoutput(force_install_str)
+    install_str="LANG=C DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true chroot %s /bin/bash -c \"dpkg %s --install %s/%s\""%(chroot_path,force_str,pkg_path,deb['dep']['name'].split('/')[-1])
+    print install_str
+    run_status=commands.getoutput(install_str)
     print run_status
+
+def configure_all(chroot_path):
+  run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"dpkg --configure -a\""%(chroot_path))
+  print run_status
+
+def touch_shadow(chroot_path):
+  run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"touch /etc/shadow\""%(chroot_path))
+  print run_status
+  run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"touch /etc/gshadow\""%(chroot_path))
+  print run_status
+
+def bind_sys(chroot_path):
+  run_status=commands.getoutput("mount -o bind /dev %s/dev"%(chroot_path))
+  print run_status
+  run_status=commands.getoutput("mount -o bind /dev/pts %s/dev/pts"%(chroot_path))
+  print run_status
+  run_status=commands.getoutput("mount -o bind /proc %s/proc"%(chroot_path))
+  print run_status
+  run_status=commands.getoutput("mount -o bind /sys %s/sys"%(chroot_path))
+  print run_status
+
+def download_install(chroot_path,repoyml,group_manifest,pkg_path,pkg_path_abs):
+  download_packages(chroot_path,repoyml,group_manifest)
+  os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
+  install(group_manifest, chroot_path, pkg_path, False)
+  configure_all(chroot_path)
+
+def make_block_disk():
+  raw_file="output.raw"
+  commands.getoutput("dd if=/dev/zero of=%s bs=512 count=20971520"%(raw_file))
+  time.sleep(5)
+  commands.getoutput("losetup -f %s"%(raw_file))
+  loop_dev="/dev/loop0"
+  commands.getoutput("losetup -a")
+  commands.getoutput("parted -s -- %s mklabel GPT"%(loop_dev))
+  commands.getoutput("parted -s -- %s unit MB mkpart primary ext2 1 2"%(loop_dev))
+  commands.getoutput("parted -s -- %s set 1 bios_grub on"%(loop_dev))
+  commands.getoutput("parted -s -- %s unit s mkpart primary ext4 4096 20971486"%(loop_dev))
+  commands.getoutput("echo '0 20971520 linear 7:0 0'|dmsetup create hda")
+  commands.getoutput("dmsetup info hda")
+  time.sleep(20)
+  commands.getoutput("kpartx -a /dev/mapper/hda")
+  commands.getoutput("mkfs.ext4 /dev/mapper/hda2")
+  commands.getoutput("mount /dev/mapper/hda2 /mnt")
 
 def main():
   # print path
@@ -149,61 +193,38 @@ def main():
     repoyml = cwd+"/"+group+"/repo.yml"
     if group_manifest == None:
       print "THERE IS NOTHING HERE, YO"
-    else:
-      if "defaults" in artifact:
-        print "\n\n####################  Installing the base packages  ############################\n\n"
-        download_unpack(chroot_path,repoyml,group_manifest)
-        #Move the packages to folder
-        os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
-        os.system("cd %s; touch var/lib/dpkg/status"%(chroot_path))
-      #Install all the packages with force-depends
-      elif "stage1" in artifact:
-        #Force install stage1 packages
-        install(group_manifest, chroot_path, pkg_path, True)
-      elif "stage2" in artifact:
-        # Install stage2 packages normally
-        install(group_manifest, chroot_path, pkg_path, False)
-        run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"dpkg --configure -a\""%(chroot_path))
-        print run_status
-      elif "system" in artifact:
-        print "\n\n####################  Installing the system packages  ############################\n\n"
-        # Install system packages normally
-        download_packages(chroot_path,repoyml,group_manifest)
-        os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
-        run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"touch /etc/shadow\""%(chroot_path))
-        print run_status
-        run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"touch /etc/gshadow\""%(chroot_path))
-        print run_status
-        install(group_manifest, chroot_path, pkg_path, False)
-        run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"dpkg --configure -a\""%(chroot_path))
-        print run_status
-      elif "networking" in artifact:
-        run_status=commands.getoutput("mount -o bind /dev %s/dev"%(chroot_path))
-        print run_status
-        run_status=commands.getoutput("mount -o bind /dev/pts %s/dev/pts"%(chroot_path))
-        print run_status
-        run_status=commands.getoutput("mount -o bind /proc %s/proc"%(chroot_path))
-        print run_status
-        run_status=commands.getoutput("mount -o bind /sys %s/sys"%(chroot_path))
-        print run_status
-        print "\n\n####################  Installing the netowrking packages  ############################\n\n"
-        download_packages(chroot_path,repoyml,group_manifest)
-        os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
-        install(group_manifest, chroot_path, pkg_path, False)
-        run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"dpkg --configure -a\""%(chroot_path))
-        print run_status
-      elif "development" in artifact:
-        print "\n\n####################  Installing the development packages  ############################\n\n"
-        download_packages(chroot_path,repoyml,group_manifest)
-        os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
-        install(group_manifest, chroot_path, pkg_path, False)
-        run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"dpkg --configure -a\""%(chroot_path))
-        print run_status
-      elif "physical" in artifact:
-        download_packages(chroot_path,repoyml,group_manifest)
-        os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
-        install(group_manifest, chroot_path, pkg_path, False)
-        run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"dpkg --configure -a\""%(chroot_path))
-        print run_status
+      continue
+
+    if "defaults" in artifact:
+      print "\n\n####################  Installing the base packages  ############################\n\n"
+      download_unpack(chroot_path,repoyml,group_manifest)
+      #Move the packages to folder
+      os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
+      os.system("cd %s; touch var/lib/dpkg/status"%(chroot_path))
+    #Install all the packages with force-depends
+    elif "stage1" in artifact:
+      #Force install stage1 packages
+      install(group_manifest, chroot_path, pkg_path, True)
+    elif "stage2" in artifact:
+      # Install stage2 packages normally
+      install(group_manifest, chroot_path, pkg_path, False)
+      configure_all(chroot_path)
+    elif "system" in artifact:
+      print "\n\n####################  Installing the system packages  ############################\n\n"
+      # Install system packages normally
+      touch_shadow(chroot_path)
+      download_install(chroot_path,repoyml,group_manifest,pkg_path,pkg_path_abs)
+    elif "networking" in artifact:
+      print "\n\n####################  Installing the netowrking packages  ############################\n\n"
+      bind_sys(chroot_path)
+      download_install(chroot_path,repoyml,group_manifest,pkg_path,pkg_path_abs)
+    elif "development" in artifact:
+      print "\n\n####################  Installing the development packages  ############################\n\n"
+      download_install(chroot_path,repoyml,group_manifest,pkg_path,pkg_path_abs)
+    elif "physical" in artifact:
+      print "\n\n####################  Installing the physical packages  ############################\n\n"
+      download_install(chroot_path,repoyml,group_manifest,pkg_path,pkg_path_abs)
+
+  make_block_disk()
 if __name__ == "__main__":
   main()
