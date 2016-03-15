@@ -55,4 +55,30 @@
  - dep:
       name: "netcat-openbsd/netcat-openbsd_1.105-7_amd64.deb"
       repo: 'main'
-
+ - dep:
+      name: k/krb5/libk5crypto3_1.12.1+dfsg-19+deb8u2_amd64.deb
+      repo: security
+ - dep:
+      name: k/keyutils/libkeyutils1_1.5.9-5+b1_amd64.deb
+      repo: main
+ - dep:
+      name: k/krb5/libkrb5support0_1.12.1+dfsg-19+deb8u2_amd64.deb
+      repo: security
+ - dep:
+      name: k/krb5/libgssapi-krb5-2_1.12.1+dfsg-19+deb8u2_amd64.deb
+      repo: security
+ - dep:
+      name: k/krb5/libkrb5-3_1.12.1+dfsg-19+deb8u2_amd64.deb
+      repo: security
+ - dep:
+      name: t/tcp-wrappers/libwrap0_7.6.q-25_amd64.deb
+      repo: main
+ - dep:
+      name: o/openssh/openssh-sftp-server_6.7p1-5+deb8u1_amd64.deb
+      repo: main
+ - dep:
+      name: o/openssh/openssh-client_6.7p1-5+deb8u1_amd64.deb
+      repo: main
+ - dep:
+      name: o/openssh/openssh-server_6.7p1-5+deb8u1_amd64.deb
+      repo: main
