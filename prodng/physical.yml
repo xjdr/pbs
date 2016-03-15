@@ -2,11 +2,21 @@
     name: s/syslinux/extlinux_6.03+dfsg-5+deb8u1_amd64.deb
     repo: main
 - dep:
+    name: k/kmod/kmod_18-3_amd64.deb
+    repo: main
+- dep:
+    name: k/klibc/libklibc_2.0.4-2_amd64.deb
+    repo: main
+- dep:
+    name: k/klibc/klibc-utils_2.0.4-2_amd64.deb
+    repo: main
+
+- dep:
     name: i/initramfs-tools/initramfs-tools_0.120_all.deb
     repo: main
 - dep:
     name: l/linux-source-4.5.0-rc1-prodng/linux-headers-4.5.0-rc1-prodng_1_amd64.deb
     repo: apt
 - dep:
-    name: l/linux-source-4.5.0-rc1-prodng/linux-images-4.5.0-rc1-prodng_1_amd64.deb
+    name: l/linux-source-4.5.0-rc1-prodng/linux-image-4.5.0-rc1-prodng_1_amd64.deb
     repo: apt
