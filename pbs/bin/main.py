@@ -172,8 +172,8 @@ def main():
         print run_status
       elif "networking" in artifact:
         download_packages(chroot_path,repoyml,group_manifest)
-        install(group_manifest, chroot_path, pkg_path, False)
         os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
+        install(group_manifest, chroot_path, pkg_path, False)
         run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"dpkg --configure -a\""%(chroot_path))
         print run_status
   #    elif "development" in artifact:
