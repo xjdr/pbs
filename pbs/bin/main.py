@@ -151,6 +151,7 @@ def main():
       print "THERE IS NOTHING HERE, YO"
     else:
       if "defaults" in artifact:
+        print "\n\n####################  Installing the base packages  ############################\n\n"
         download_unpack(chroot_path,repoyml,group_manifest)
         #Move the packages to folder
         os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
@@ -165,6 +166,7 @@ def main():
         run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"dpkg --configure -a\""%(chroot_path))
         print run_status
       elif "system" in artifact:
+        print "\n\n####################  Installing the system packages  ############################\n\n"
         # Install system packages normally
         download_packages(chroot_path,repoyml,group_manifest)
         os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
@@ -176,12 +178,14 @@ def main():
         run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"dpkg --configure -a\""%(chroot_path))
         print run_status
       elif "networking" in artifact:
+        print "\n\n####################  Installing the netowrking packages  ############################\n\n"
         download_packages(chroot_path,repoyml,group_manifest)
         os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
         install(group_manifest, chroot_path, pkg_path, False)
         run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"dpkg --configure -a\""%(chroot_path))
         print run_status
       elif "development" in artifact:
+        print "\n\n####################  Installing the development packages  ############################\n\n"
         download_packages(chroot_path,repoyml,group_manifest)
         os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
         install(group_manifest, chroot_path, pkg_path, False)
