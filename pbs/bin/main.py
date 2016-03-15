@@ -6,6 +6,7 @@ import sys
 import yaml
 import requests
 import urllib2
+import shutil
 
 #from IPython import embed
 #from progressbar import *
@@ -90,7 +91,7 @@ def download_package(name, pkg_path ,url):
 def setup_env(env):
   chroot_path=os.path.join(env['target'])
   #Create a base folder for building the image
-  create_folder(chroot_path)
+  create_folder(chroot_path,True)
   return chroot_path
 
 def unpack_pkg(pkgname,gz,chroot_path):
@@ -100,7 +101,11 @@ def unpack_pkg(pkgname,gz,chroot_path):
     unpackstr = "cd %s; ar p %s data.tar.xz | tar xJ "%(chroot_path, pkgname);
   os.system(unpackstr);
 
-def create_folder(path):
+def create_folder(path,remove_if_present=False):
+
+  if (os.path.exists(path) and remove_if_present):
+    shutil.rmtree(path)
+
   if not os.path.exists(path):
     os.mkdir(path,0755);
   return path
@@ -146,6 +151,7 @@ def main():
       print "THERE IS NOTHING HERE, YO"
     else:
       if "defaults" in artifact:
+        print "\n\n####################  Installing the base packages  ############################\n\n"
         download_unpack(chroot_path,repoyml,group_manifest)
         #Move the packages to folder
         os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
@@ -160,6 +166,7 @@ def main():
         run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"dpkg --configure -a\""%(chroot_path))
         print run_status
       elif "system" in artifact:
+        print "\n\n####################  Installing the system packages  ############################\n\n"
         # Install system packages normally
         download_packages(chroot_path,repoyml,group_manifest)
         os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
@@ -179,12 +186,14 @@ def main():
         print run_status
         run_status=commands.getoutput("mount -o bind /sys %s/sys"%(chroot_path))
         print run_status
+        print "\n\n####################  Installing the netowrking packages  ############################\n\n"
         download_packages(chroot_path,repoyml,group_manifest)
         os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
         install(group_manifest, chroot_path, pkg_path, False)
         run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"dpkg --configure -a\""%(chroot_path))
         print run_status
       elif "development" in artifact:
+        print "\n\n####################  Installing the development packages  ############################\n\n"
         download_packages(chroot_path,repoyml,group_manifest)
         os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
         install(group_manifest, chroot_path, pkg_path, False)
