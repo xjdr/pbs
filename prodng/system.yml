@@ -155,4 +155,6 @@
 - dep:
     name: c/cpio/cpio_2.11+dfsg-4.1+deb8u1_amd64.deb
     repo: security
-
+- dep:
+    name: i/init-system-helpers/init-system-helpers_1.22_all.deb
+    repo: main

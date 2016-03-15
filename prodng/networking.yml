@@ -14,7 +14,7 @@
       name: "d/db5.3/libdb5.3_5.3.28-9_amd64.deb"
       repo: 'main'
  - dep:
-      name: "iproute2/iproute2_3.16.0-2_amd64.deb"
+      name: "iproute2/iproute2_4.3.0-1+b1_amd64.deb"
       repo: 'main'
  - dep:
       name: "libn/libnfnetlink/libnfnetlink0_1.0.1-3_amd64.deb"
@@ -26,16 +26,16 @@
       name: "iptables/iptables_1.4.21-2+b1_amd64.deb"
       repo: 'main'
  - dep:
-      name: "b/bind9/libdns-export100_9.9.5.dfsg-9+deb8u5_amd64.deb"
+      name: "b/bind9/libisc-export95_9.9.5.dfsg-9+deb8u6_amd64.deb"
       repo: 'security'
  - dep:
-      name: "b/bind9/libisc-export95_9.9.5.dfsg-9+deb8u5_amd64.deb"
+      name: "b/bind9/libdns-export100_9.9.5.dfsg-9+deb8u6_amd64.deb"
       repo: 'security'
  - dep:
-      name: "b/bind9/libirs-export91_9.9.5.dfsg-9+deb8u5_amd64.deb"
+      name: "b/bind9/libirs-export91_9.9.5.dfsg-9+deb8u6_amd64.deb"
       repo: 'security'
  - dep:
-      name: "b/bind9/libisccfg-export90_9.9.5.dfsg-9+deb8u5_amd64.deb"
+      name: "b/bind9/libisccfg-export90_9.9.5.dfsg-9+deb8u6_amd64.deb"
       repo: 'security'
  - dep:
       name: "i/isc-dhcp/isc-dhcp-common_4.3.1-6+deb8u2_amd64.deb"
@@ -43,5 +43,16 @@
  - dep:
       name: "i/isc-dhcp/isc-dhcp-client_4.3.1-6+deb8u2_amd64.deb"
       repo: 'main'
-
+ - dep:
+      name: "h/hostname/hostname_3.17_amd64.deb"
+      repo: 'main'
+ - dep:
+      name: "i/ifupdown/ifupdown_0.8.10_amd64.deb"
+      repo: 'main'
+ - dep:
+      name: "n/netcat/netcat-traditional_1.10-41_amd64.deb"
+      repo: 'main'
+ - dep:
+      name: "netcat-openbsd/netcat-openbsd_1.105-7_amd64.deb"
+      repo: 'main'
 
