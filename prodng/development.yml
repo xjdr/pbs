@@ -19,15 +19,6 @@
 - dep:
     name: strace/strace_4.9-2_amd64.deb
     repo: main
-- dep: 
-    name: netcat/netcat-traditional_1.10-41_amd64.deb
-    repo: main
-- dep:
-    name: netcat-openbsd/netcat-openbsd_1.105-7_amd64.deb
-    repo: main
-- dep:
-    name: netcat/netcat_1.10-41_all.deb
-    repo: main
 - dep:
     name: libp/libpcap/libpcap0.8_1.6.2-2_amd64.deb
     repo: main
