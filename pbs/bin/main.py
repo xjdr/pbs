@@ -189,9 +189,12 @@ def extlinux(chroot_path):
   file.close()
   
 def reconfigure_all(chroot_path):
-  r = commands.getoutput("LANG=C DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true chroot %s /bin/bash -c \"for i in `dpkg -l |grep ii| awk {\'print $2\'}`; do dpkg-reconfigure $i;done\""%(chroot_path))
+  r = commands.getoutput("LANG=C DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true chroot %s /bin/bash -c \"for i in `dpkg -l |egrep 'all|amd' awk {\'print $2\'}`; do dpkg-reconfigure $i;done\""%(chroot_path))
   print r
 
+def update_initramfs(chroot_path):
+  iupdate = commands.getoutput("LANG=C DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true chroot %s /bin/bash -c "update-initramfs -u""%(chroot_path))
+  print ipdate
 def main():
   # print path
   manifest = parse_config(path)
@@ -239,7 +242,9 @@ def main():
       print "\n\n####################  Installing the physical packages  ############################\n\n"
       download_install(chroot_path,repoyml,group_manifest,pkg_path,pkg_path_abs)
  
-  #reconfigure_all() 
-  extlinux(chroot_path)
+ extlinux(chroot_path)
+ reconfigure_all(chroot_path) 
+ update_initramfs(chroot_path)
+
 if __name__ == "__main__":
   main()
