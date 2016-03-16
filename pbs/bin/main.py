@@ -6,6 +6,8 @@ import sys
 import yaml
 import requests
 import urllib2
+import shutil
+import time
 
 #from IPython import embed
 #from progressbar import *
@@ -46,14 +48,14 @@ def build_uri(dep,repoyml):
       print " Download URI : " , complete_uri
       return complete_uri
   else:
-      complete_uri = base_uri + '/' + dep['name']
+      complete_uri = base_uri + dep['name']
       uri_true=validate_uri(complete_uri)
       if uri_true == 0:
-          print " Download URI : " , complete_uri
-          return complete_uri
+        print " Download URI : " , complete_uri
+        return complete_uri
       else:
-         print " Not a valid Download link :"+ complete_uri
-	 sys.exit(1)
+        print " Not a valid Download link :"+ complete_uri
+        sys.exit(1)
 
 
 def download_package(name, pkg_path ,url):
@@ -76,10 +78,10 @@ def download_package(name, pkg_path ,url):
 
     with open(pkg_path+"/"+ name, 'wb') as f:
       for chunk in deb.iter_content(chunk_size=1024):
-	pbar.update(12)
-	if chunk: # filter out keep-alive new chunks
-	  f.write(chunk)
-	  f.flush()
+        pbar.update(12)
+        if chunk: # filter out keep-alive new chunks
+          f.write(chunk)
+          f.flush()
 
     pbar.close()
 
@@ -90,20 +92,105 @@ def download_package(name, pkg_path ,url):
 def setup_env(env):
   chroot_path=os.path.join(env['target'])
   #Create a base folder for building the image
-  create_folder(chroot_path)
+  create_folder(chroot_path,True)
+  make_block_disk(chroot_path)
   return chroot_path
 
 def unpack_pkg(pkgname,gz,chroot_path):
-    if(gz):
-        unpackstr = "cd %s; ar p %s data.tar.gz | tar xz "%(chroot_path, pkgname);
-    else:
-        unpackstr = "cd %s; ar p %s data.tar.xz | tar xJ "%(chroot_path, pkgname);
-    os.system(unpackstr);
+  if(gz):
+    unpackstr = "cd %s; ar p %s data.tar.gz | tar xz "%(chroot_path, pkgname);
+  else:
+    unpackstr = "cd %s; ar p %s data.tar.xz | tar xJ "%(chroot_path, pkgname);
+  os.system(unpackstr);
 
-def create_folder(path):
+def create_folder(path,remove_if_present=False):
+
+  if (os.path.exists(path) and remove_if_present):
+    shutil.rmtree(path)
+
   if not os.path.exists(path):
     os.mkdir(path,0755);
   return path
+
+def download_unpack(chroot_path,repoyml,group_manifest):
+  for deb in group_manifest:
+      # Download the package 
+      download_package(deb['dep']['name'].split('/')[-1], chroot_path ,build_uri(deb['dep'],repoyml))
+      # Unpack the package 
+      unpack_pkg(deb['dep']['name'].split('/')[-1],deb['dep']['format']=='gz', chroot_path)
+
+def download_packages(chroot_path,repoyml,group_manifest):
+    for deb in group_manifest:
+      download_package(deb['dep']['name'].split('/')[-1], chroot_path ,build_uri(deb['dep'],repoyml))
+
+def install(group_manifest, chroot_path, pkg_path, force_install):
+  if force_install:
+    force_str="--force-depends"
+  else:
+    force_str=""
+
+  for deb in group_manifest:
+    install_str="LANG=C DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true chroot %s /bin/bash -c \"dpkg %s --install %s/%s\""%(chroot_path,force_str,pkg_path,deb['dep']['name'].split('/')[-1])
+    print install_str
+    run_status=commands.getoutput(install_str)
+    print run_status
+
+def configure_all(chroot_path):
+  run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"dpkg --configure -a\""%(chroot_path))
+  print run_status
+
+def touch_shadow(chroot_path):
+  run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"touch /etc/shadow\""%(chroot_path))
+  print run_status
+  run_status=commands.getoutput("LANG=C chroot %s /bin/bash -c \"touch /etc/gshadow\""%(chroot_path))
+  print run_status
+
+def bind_sys(chroot_path):
+  run_status=commands.getoutput("mount -o bind /dev %s/dev"%(chroot_path))
+  print run_status
+  run_status=commands.getoutput("mount -o bind /dev/pts %s/dev/pts"%(chroot_path))
+  print run_status
+  run_status=commands.getoutput("mount -o bind /proc %s/proc"%(chroot_path))
+  print run_status
+  run_status=commands.getoutput("mount -o bind /sys %s/sys"%(chroot_path))
+  print run_status
+
+def download_install(chroot_path,repoyml,group_manifest,pkg_path,pkg_path_abs):
+  download_packages(chroot_path,repoyml,group_manifest)
+  os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
+  install(group_manifest, chroot_path, pkg_path, False)
+  configure_all(chroot_path)
+
+def make_block_disk(chroot_path):
+  raw_file="output.raw"
+  commands.getoutput("dd if=/dev/zero of=%s bs=512 count=5242880"%(raw_file))
+  time.sleep(5)
+  commands.getoutput("losetup -f %s"%(raw_file))
+  loop_dev="/dev/loop0"
+  commands.getoutput("losetup -a")
+  commands.getoutput("mkfs.ext4 -L ProdNG /dev/loop0")
+  commands.getoutput("mount /dev/loop0 %s"%(chroot_path))
+
+def extlinux(chroot_path):
+  r = commands.getoutput("LANG=C chroot %s /bin/bash -c \"extlinux --install \\boot\""%(chroot_path))
+  print r
+  boot_path=os.path.join(chroot_path,"boot")
+  conf_file=os.path.join(boot_path,"extlinux.conf")
+  for file in os.listdir(boot_path):
+    if file.startswith("initrd"):
+      initrd=os.path.join("/boot",file)
+    elif file.startswith("vmlinuz"):
+      vmlinuz=os.path.join("/boot",file)
+  file = open(conf_file,"w")
+  file.write("DEFAULT PRODNG \nPROMPT 1 \nTIMEOUT 60 \n  SAY Now booting the kernel from SYSLINUX...\n")
+  file.write("LABEL PRODNG\n")
+  file.write("  KERNEL %s\n"%(vmlinuz))
+  file.write("  APPEND rw initrd=%s root=LABEL=ProdNG\n"%(initrd))
+  file.close()
+  
+def reconfigure_all(chroot_path):
+  r = commands.getoutput("LANG=C DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true chroot %s /bin/bash -c \"for i in `dpkg -l |grep ii| awk {\'print $2\'}`; do dpkg-reconfigure $i;done\""%(chroot_path))
+  print r
 
 def main():
   # print path
@@ -120,24 +207,39 @@ def main():
     repoyml = cwd+"/"+group+"/repo.yml"
     if group_manifest == None:
       print "THERE IS NOTHING HERE, YO"
-    else:
-      for deb in group_manifest:
-          if "defaults" in artifact:
-              download_package(deb['dep']['name'].split('/')[-1], chroot_path ,build_uri(deb['dep'],repoyml))
-              unpack_pkg(deb['dep']['name'].split('/')[-1],deb['dep']['format']=='gz', chroot_path)
+      continue
+
+    if "defaults" in artifact:
+      print "\n\n####################  Installing the base packages  ############################\n\n"
+      download_unpack(chroot_path,repoyml,group_manifest)
       #Move the packages to folder
-              os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
-              os.system("cd %s; touch var/lib/dpkg/status"%(chroot_path))
-      #Install all the packages with force-depends
-          elif "stage1" in artifact:
-             force_install_str="LANG=C chroot %s /bin/bash -c \"dpkg --force-depends --install %s/*.deb\""%(chroot_path,pkg_path)
-             print force_install_str
-              #for i in range(0,3):
- #            os.system(force_install_str);
-             run_status=commands.getoutput(force_install_str)
-             print run_status
-
-      #sys.exit(0)
-
+      os.system("mv %s/*.deb %s"%(chroot_path,pkg_path_abs))
+      os.system("cd %s; touch var/lib/dpkg/status"%(chroot_path))
+    #Install all the packages with force-depends
+    elif "stage1" in artifact:
+      #Force install stage1 packages
+      install(group_manifest, chroot_path, pkg_path, True)
+    elif "stage2" in artifact:
+      # Install stage2 packages normally
+      install(group_manifest, chroot_path, pkg_path, False)
+      configure_all(chroot_path)
+    elif "system" in artifact:
+      print "\n\n####################  Installing the system packages  ############################\n\n"
+      # Install system packages normally
+      touch_shadow(chroot_path)
+      download_install(chroot_path,repoyml,group_manifest,pkg_path,pkg_path_abs)
+    elif "networking" in artifact:
+      print "\n\n####################  Installing the netowrking packages  ############################\n\n"
+      bind_sys(chroot_path)
+      download_install(chroot_path,repoyml,group_manifest,pkg_path,pkg_path_abs)
+    elif "development" in artifact:
+      print "\n\n####################  Installing the development packages  ############################\n\n"
+      download_install(chroot_path,repoyml,group_manifest,pkg_path,pkg_path_abs)
+    elif "physical" in artifact:
+      print "\n\n####################  Installing the physical packages  ############################\n\n"
+      download_install(chroot_path,repoyml,group_manifest,pkg_path,pkg_path_abs)
+ 
+  #reconfigure_all() 
+  extlinux()
 if __name__ == "__main__":
   main()

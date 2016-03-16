@@ -15,5 +15,17 @@ stages:
       version: '0.1'
   - dep:
       group: 'prodng'
+      artifact: 'system'
+      version: '0.1'
+  - dep:
+      group: 'prodng'
       artifact: 'networking'
+      version: '0.1'
+  - dep:
+      group: 'prodng'
+      artifact: 'development'
+      version: '0.1'
+  - dep:
+      group: 'prodng'
+      artifact: 'physical'
       version: '0.1'

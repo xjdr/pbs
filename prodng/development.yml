@@ -1,0 +1,30 @@
+- dep:
+    name: gpm/libgpm2_1.20.4-6.1+b2_amd64.deb
+    repo: main
+- dep:
+    name: vim/vim-common_7.4.488-7_amd64.deb
+    repo: main
+- dep:
+    name: vim/vim-runtime_7.4.488-7_all.deb
+    repo: main
+- dep:
+    name: vim/vim_7.4.488-7_amd64.deb
+    repo: main
+- dep:
+    name: libe/libevent/libevent-2.0-5_2.0.21-stable-2_amd64.deb
+    repo: main
+- dep:
+    name: tmux/tmux_1.9-6_amd64.deb
+    repo: main
+- dep:
+    name: strace/strace_4.9-2_amd64.deb
+    repo: main
+- dep:
+    name: libp/libpcap/libpcap0.8_1.6.2-2_amd64.deb
+    repo: main
+- dep:
+    name: openssl/libssl1.0.0_1.0.1k-3+deb8u4_amd64.deb
+    repo: security
+- dep:
+    name: tcpdump/tcpdump_4.6.2-5+deb8u1_amd64.deb
+    repo: main
