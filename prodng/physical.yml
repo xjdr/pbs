@@ -20,3 +20,9 @@
 - dep:
     name: l/linux-source-4.5.0-rc1-prodng/linux-image-4.5.0-rc1-prodng_1_amd64.deb
     repo: apt
+- dep:
+    name: e2fsprogs/libss2_1.42.12-1.1_amd64.deb
+    repo: main
+- dep:
+    name: e2fsprogs/e2fsprogs_1.42.12-1.1_amd64.deb
+    repo: main

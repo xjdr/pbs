@@ -93,6 +93,7 @@ def setup_env(env):
   chroot_path=os.path.join(env['target'])
   #Create a base folder for building the image
   create_folder(chroot_path,True)
+  make_block_disk(chroot_path)
   return chroot_path
 
 def unpack_pkg(pkgname,gz,chroot_path):
@@ -160,23 +161,23 @@ def download_install(chroot_path,repoyml,group_manifest,pkg_path,pkg_path_abs):
   install(group_manifest, chroot_path, pkg_path, False)
   configure_all(chroot_path)
 
-def make_block_disk():
+def make_block_disk(chroot_path):
   raw_file="output.raw"
-  commands.getoutput("dd if=/dev/zero of=%s bs=512 count=20971520"%(raw_file))
+  commands.getoutput("dd if=/dev/zero of=%s bs=512 count=5242880"%(raw_file))
   time.sleep(5)
   commands.getoutput("losetup -f %s"%(raw_file))
   loop_dev="/dev/loop0"
   commands.getoutput("losetup -a")
-  commands.getoutput("parted -s -- %s mklabel GPT"%(loop_dev))
-  commands.getoutput("parted -s -- %s unit MB mkpart primary ext2 1 2"%(loop_dev))
-  commands.getoutput("parted -s -- %s set 1 bios_grub on"%(loop_dev))
-  commands.getoutput("parted -s -- %s unit s mkpart primary ext4 4096 20971486"%(loop_dev))
-  commands.getoutput("echo '0 20971520 linear 7:0 0'|dmsetup create hda")
-  commands.getoutput("dmsetup info hda")
+  #commands.getoutput("parted -s -- %s mklabel GPT"%(loop_dev))
+  #commands.getoutput("parted -s -- %s unit MB mkpart primary ext2 1 2"%(loop_dev))
+  #commands.getoutput("parted -s -- %s set 1 bios_grub on"%(loop_dev))
+  #commands.getoutput("parted -s -- %s unit s mkpart primary ext4 4096 20971486"%(loop_dev))
+  #commands.getoutput("echo '0 20971520 linear 7:0 0'|dmsetup create hda")
+  #commands.getoutput("dmsetup info hda")
   time.sleep(20)
-  commands.getoutput("kpartx -a /dev/mapper/hda")
-  commands.getoutput("mkfs.ext4 /dev/mapper/hda2")
-  commands.getoutput("mount /dev/mapper/hda2 /mnt")
+  #commands.getoutput("kpartx -a /dev/mapper/hda")
+  commands.getoutput("mkfs.ext4 -L ProdNG /dev/loop0")
+  commands.getoutput("mount /dev/loop0 %s"%(chroot_path))
 
 def main():
   # print path
@@ -225,6 +226,5 @@ def main():
       print "\n\n####################  Installing the physical packages  ############################\n\n"
       download_install(chroot_path,repoyml,group_manifest,pkg_path,pkg_path_abs)
 
-  make_block_disk()
 if __name__ == "__main__":
   main()
