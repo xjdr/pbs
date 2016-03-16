@@ -168,16 +168,29 @@ def make_block_disk(chroot_path):
   commands.getoutput("losetup -f %s"%(raw_file))
   loop_dev="/dev/loop0"
   commands.getoutput("losetup -a")
-  #commands.getoutput("parted -s -- %s mklabel GPT"%(loop_dev))
-  #commands.getoutput("parted -s -- %s unit MB mkpart primary ext2 1 2"%(loop_dev))
-  #commands.getoutput("parted -s -- %s set 1 bios_grub on"%(loop_dev))
-  #commands.getoutput("parted -s -- %s unit s mkpart primary ext4 4096 20971486"%(loop_dev))
-  #commands.getoutput("echo '0 20971520 linear 7:0 0'|dmsetup create hda")
-  #commands.getoutput("dmsetup info hda")
-  time.sleep(20)
-  #commands.getoutput("kpartx -a /dev/mapper/hda")
   commands.getoutput("mkfs.ext4 -L ProdNG /dev/loop0")
   commands.getoutput("mount /dev/loop0 %s"%(chroot_path))
+
+def extlinux(chroot_path):
+  r = commands.getoutput("LANG=C chroot %s /bin/bash -c \"extlinux --install \\boot\""%(chroot_path))
+  print r
+  boot_path=os.path.join(chroot_path,"boot")
+  conf_file=os.path.join(boot_path,"extlinux.conf")
+  for file in os.listdir(boot_path):
+    if file.startswith("initrd"):
+      initrd=os.path.join("/boot",file)
+    elif file.startswith("vmlinuz"):
+      vmlinuz=os.path.join("/boot",file)
+  file = open(conf_file,"w")
+  file.write("DEFAULT PRODNG \nPROMPT 1 \nTIMEOUT 60 \n  SAY Now booting the kernel from SYSLINUX...\n")
+  file.write("LABEL PRODNG\n")
+  file.write("  KERNEL %s\n"%(vmlinuz))
+  file.write("  APPEND rw initrd=%s root=LABEL=ProdNG\n"%(initrd))
+  file.close()
+  
+def reconfigure_all(chroot_path):
+  r = commands.getoutput("LANG=C DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true chroot %s /bin/bash -c \"for i in `dpkg -l |grep ii| awk {\'print $2\'}`; do dpkg-reconfigure $i;done\""%(chroot_path))
+  print r
 
 def main():
   # print path
@@ -225,6 +238,8 @@ def main():
     elif "physical" in artifact:
       print "\n\n####################  Installing the physical packages  ############################\n\n"
       download_install(chroot_path,repoyml,group_manifest,pkg_path,pkg_path_abs)
-
+ 
+  #reconfigure_all() 
+  extlinux()
 if __name__ == "__main__":
-  main()
+  reconfigure_all("/tmp/prodng_chroot")
