@@ -242,4 +242,4 @@ def main():
   #reconfigure_all() 
   extlinux()
 if __name__ == "__main__":
-  reconfigure_all("/tmp/prodng_chroot")
+  main()
