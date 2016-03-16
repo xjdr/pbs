@@ -244,9 +244,9 @@ def main():
       print "\n\n####################  Installing the physical packages  ############################\n\n"
       download_install(chroot_path,repoyml,group_manifest,pkg_path,pkg_path_abs)
  
- extlinux(chroot_path)
- reconfigure_all(chroot_path) 
- update_initramfs(chroot_path)
+  extlinux(chroot_path)
+  reconfigure_all(chroot_path) 
+  update_initramfs(chroot_path)
 
 if __name__ == "__main__":
   main()
