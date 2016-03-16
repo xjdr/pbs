@@ -240,6 +240,6 @@ def main():
       download_install(chroot_path,repoyml,group_manifest,pkg_path,pkg_path_abs)
  
   #reconfigure_all() 
-  extlinux()
+  extlinux(chroot_path)
 if __name__ == "__main__":
   main()
