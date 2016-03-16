@@ -193,7 +193,9 @@ def reconfigure_all(chroot_path):
   print r
 
 def update_initramfs(chroot_path):
-  iupdate = commands.getoutput("LANG=C DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true chroot %s /bin/bash -c "update-initramfs -u""%(chroot_path))
+  iup_cmd= "LANG=C DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true "
+  + chroot + " " + chroot_path + " " + "/bin/bash -c update-initramfs -u "
+  iupdate = commands.getoutput(iup_cmd)
   print ipdate
 def main():
   # print path
