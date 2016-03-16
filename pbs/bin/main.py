@@ -189,14 +189,20 @@ def extlinux(chroot_path):
   file.close()
   
 def reconfigure_all(chroot_path):
-  r = commands.getoutput("LANG=C DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true chroot %s /bin/bash -c \"for i in `dpkg -l |egrep 'all|amd' awk {\'print $2\'}`; do dpkg-reconfigure $i;done\""%(chroot_path))
-  print r
+  pkg_list=commands.getoutput("LANG=C DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true chroot " + chroot_path + " dpkg -l | egrep 'all|amd' | awk {'print $2'} ").split()
+  for pkg in pkg_list:
+    print " reconfiguring pkg ",pkg
+    reconfig_cmd="LANG=C DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true chroot " + chroot_path + " dpkg-reconfigure " + pkg
+    print reconfig_cmd
+    result=commands.getstatusoutput(reconfig_cmd)
+    print result
+  
 
 def update_initramfs(chroot_path):
-  iup_cmd= "LANG=C DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true "
-  + chroot + " " + chroot_path + " " + "/bin/bash -c update-initramfs -u "
-  iupdate = commands.getoutput(iup_cmd)
-  print ipdate
+  update_status=commands.getstatusoutput("chroot " + chroot_path + " update-initramfs -u")
+  print update_status
+  
+
 def main():
   # print path
   manifest = parse_config(path)
@@ -225,6 +231,7 @@ def main():
       #Force install stage1 packages
       install(group_manifest, chroot_path, pkg_path, True)
     elif "stage2" in artifact:
+      print "\n\n####################  Installing the stage2 packages  ############################\n\n"
       # Install stage2 packages normally
       install(group_manifest, chroot_path, pkg_path, False)
       configure_all(chroot_path)
