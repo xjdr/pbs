@@ -1,12 +1,10 @@
 language: python
 python:
-  - "2.6"
   - "2.7"
 # command to install dependencies
 install:
   - "pip install -r requirements.txt"
-  - "pip install -r test-requirements.txt"
-# command to run tests
+  - "pip install pyvenv pyvenv-virtualenv"
 script: 
   - "source bootstrap.yml"
   - "python pbs/bin/main.py"
