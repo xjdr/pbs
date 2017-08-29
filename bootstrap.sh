@@ -1,6 +1,10 @@
 #!/bin/bash
 
-virtualenv .env
-. .env/bin/activate
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
+pyenv virtualenv pbs
+pyenv activate pbs
 pip install -r requirements.txt
+
 
