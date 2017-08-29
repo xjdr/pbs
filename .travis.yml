@@ -7,4 +7,6 @@ install:
   - "pip install -r requirements.txt"
   - "pip install -r test-requirements.txt"
 # command to run tests
-script: nosetests
+script: 
+  - "source bootstrap.yml"
+  - "python pbs/bin/main.py"
